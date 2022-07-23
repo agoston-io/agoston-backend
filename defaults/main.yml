@@ -1,0 +1,86 @@
+---
+state: present
+time_zone: Europe/Zurich
+backend_uuid: 00000000-0000-0000-0000-000000000000
+persistent_configuration_path: /opt/agoston-backend/configuration
+persistent_data_path: /opt/agoston-backend/pgdata
+
+services:
+
+  postgres:
+    image:
+      name: agostops/agoston-postgres
+      version: v14.4.0
+    postgres_superuser_password: postgres-Password2022
+    graphile_password: graphile-Password2022
+    developer_password: developer-Password2022
+    http_port_listening: 5432
+    resources:
+      limits:
+        cpus: 0.25
+        memory: 256M
+      reservations:
+        cpus: 0.1
+        memory: 128M
+
+  pgadmin:
+    image:
+      name: dpage/pgadmin4
+      version: 6.11
+    http_port_listening: 80
+    resources:
+      limits:
+        cpus: 0.25
+        memory: 256M
+      reservations:
+        cpus: 0.1
+        memory: 128M
+
+  graphile:
+    image:
+      name: agostops/agoston-graphile
+      version: v1.1.25
+    environment: production
+    http_port_listening: 4000
+    resources:
+      limits:
+        cpus: 0.15
+        memory: 128M
+      reservations:
+        cpus: 0.1
+        memory: 128M
+    cors_origin: "*"
+    recaptcha:
+      score_threshold: 0.7
+      secret_key: ""
+    frontend_cluster_domain_name: agoston-backend.local.com
+    session_cookie_secret:
+    auth:
+      strategies:
+        http-bearer:
+          enable: true
+          params: {}
+        google-oauth20:
+          enable: true
+          params:
+            clientId: ""
+            clientSecret: ""
+      redirect_logout: "/"
+      redirect_when_error: "/login"
+      redirect_when_success: "/"
+
+
+  worker:
+    image:
+      name: agostops/agoston-worker
+      version: v1.2.0
+    environment: production
+    concurrency: 1
+    poll_interval: 1000
+    resources:
+      limits:
+        cpus: 0.15
+        memory: 128M
+      reservations:
+        cpus: 0.1
+        memory: 128M

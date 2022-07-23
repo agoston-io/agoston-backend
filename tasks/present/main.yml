@@ -1,0 +1,4 @@
+---
+- include_tasks: docker.yml
+- include_tasks: images.yml
+- include_tasks: services.yml

@@ -1,0 +1,11 @@
+---
+- name: Pull backend images
+  become: yes
+  community.docker.docker_image:
+    name: "{{ item.image.name }}:{{ item.image.version }}"
+    source: pull
+  loop:
+    - "{{ services.postgres }}"
+    - "{{ services.pgadmin }}"
+    - "{{ services.graphile }}"
+    - "{{ services.worker }}"

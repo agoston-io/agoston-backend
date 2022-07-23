@@ -1,0 +1,8 @@
+---
+- name: Deploy the Agoston backend on line
+  hosts: agoston-backend
+  gather_facts: no
+  tasks:
+
+    - include_role:
+        name: agoston-backend

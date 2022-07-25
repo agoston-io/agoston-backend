@@ -15,6 +15,7 @@
             -c timezone='{{ time_zone }}'
             -c tcp_keepalives_idle=60
           environment:
+            - POSTGRES_DB=agoston
             - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
             - graphile_password={{ services.postgres.graphile_password }}
             - developer_password={{ services.postgres.developer_password }}

@@ -42,4 +42,7 @@
 - name: Install Docker Module for Python
   become: yes
   pip:
-    name: docker
+    name:
+      - docker
+      - jsondiff
+      - docker-compose

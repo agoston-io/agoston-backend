@@ -1,0 +1,11 @@
+---
+- name: Create host Persistent directories
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    mode: '0755'
+  loop:
+    - "{{ persistent_configuration_path }}"
+    - "{{ persistent_data_path }}"

@@ -1,11 +1,13 @@
 ---
 - name: Set services
   set_fact:
-    compose:
-      networks: net_01
+    backend_compose:
+      version: "3.9"
+      networks:
+        net_01:
       services:
         postgres:
-          image: "{{ services.postgres.image.version }}:{{ services.postgres.image.name }}"
+          image: "{{ services.postgres.image.name }}:{{ services.postgres.image.version }}"
           command: >
             -c search_path='agoston_public,agoston_api,agoston_identity,public'
             -c shared_preload_libraries='pg_cron'
@@ -46,7 +48,7 @@
         pgadmin:
           depends_on:
             - postgres
-          image: "{{ services.pgadmin.image.version }}:{{ services.pgadmin.image.name }}"
+          image: "{{ services.pgadmin.image.name }}:{{ services.pgadmin.image.version }}"
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ services.postgres.developer_password }}
@@ -82,7 +84,7 @@
         graphile:
           depends_on:
             - postgres
-          image: "{{ services.graphile.image.version }}:{{ services.graphile.image.name }}"
+          image: "{{ services.graphile.image.name }}:{{ services.graphile.image.version }}"
           environment:
             - BACKEND_UUID={{ backend_uuid }}
             - ENVIRONMENT_NAME={{ services.graphile.environment }}
@@ -124,7 +126,7 @@
         worker:
           depends_on:
             - postgres
-          image: "{{ services.worker.image.version }}:{{ services.worker.image.name }}"
+          image: "{{ services.worker.image.name }}:{{ services.worker.image.version }}"
           environment:
             - ENVIRONMENT_NAME={{ services.worker.environment }}
             - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
@@ -149,4 +151,4 @@
           networks:
             - net_01
 
-- debug: var=compose
+- debug: var=backend_compose

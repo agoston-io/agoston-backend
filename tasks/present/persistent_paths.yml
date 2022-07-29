@@ -1,11 +1,19 @@
 ---
-- name: Create host Persistent directories
+- name: Create host pgdata persistent directory
   become: yes
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ persistent_pgdata_path }}"
     state: directory
-    recurse: yes
-    mode: '0755'
-  loop:
-    - "{{ persistent_configuration_path }}"
-    - "{{ persistent_data_path }}"
+    owner: '999'
+    group: '999'
+    mode: '0750'
+
+- name: Create host pgadmin persistent directory
+  become: yes
+  ansible.builtin.file:
+    path: "{{ persistent_pgadmin_path }}"
+    state: directory
+    owner: '5050'
+    group: '5050'
+    mode: '0750'
+    state: directory

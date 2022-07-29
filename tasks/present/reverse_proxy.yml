@@ -1,0 +1,45 @@
+---
+- name: Install aptitude
+  become: yes
+  ansible.builtin.apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+
+- name: Ensure nginx is at the latest version
+  become: yes
+  ansible.builtin.apt:
+    name: nginx
+    state: latest
+
+- name: Start nginx
+  become: yes
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Delete default nginx site
+  become: yes
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Copy nginx site.conf
+  become: yes
+  ansible.builtin.template:
+    src: site.conf.j2
+    dest: /etc/nginx/sites-available/{{ backend_domain }}
+
+- name: Create symlink
+  become: yes
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{ backend_domain }}
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+
+- name: Restart nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted

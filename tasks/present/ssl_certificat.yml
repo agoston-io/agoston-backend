@@ -1,0 +1,21 @@
+---
+- name: Generate an OpenSSL private key
+  become: yes
+  openssl_privatekey:
+    path: /etc/ssl/{{ backend_domain }}.key
+    size: 4096
+    type: RSA
+
+- name: Generate an OpenSSL Certificate Signing Request with Subject information
+  become: yes
+  openssl_csr:
+    path: /etc/ssl/{{ backend_domain }}.crs
+    privatekey_path: /etc/ssl/{{ backend_domain }}.key
+
+- name: Create simple self-signed certificate
+  become: yes
+  community.crypto.x509_certificate:
+    path: /etc/ssl/{{ backend_domain }}.crt
+    privatekey_path: /etc/ssl/{{ backend_domain }}.key
+    csr_path: /etc/ssl/{{ backend_domain }}.crs
+    provider: selfsigned

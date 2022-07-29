@@ -2,8 +2,9 @@
 state: present
 time_zone: Europe/Zurich
 backend_uuid: 00000000-0000-0000-0000-000000000000
-persistent_configuration_path: /opt/agoston-backend/configuration
-persistent_data_path: /opt/agoston-backend/pgdata
+backend_domain: agoston-backend.com
+persistent_pgadmin_path: /opt/agoston-backend/configuration
+persistent_pgdata_path: /opt/agoston-backend/pgdata
 
 services:
 
@@ -27,7 +28,7 @@ services:
     image:
       name: dpage/pgadmin4
       version: 6.11
-    http_port_listening: 80
+    http_port_listening: 8001
     resources:
       limits:
         cpus: 0.25
@@ -39,9 +40,12 @@ services:
   graphile:
     image:
       name: agostops/agoston-graphile
-      version: v1.1.25
-    environment: production
-    http_port_listening: 4000
+      version: v1.2.1
+    environment: development
+    http_port_listening: 8000
+    http:
+      prefix:
+      backend_origin: https://{{ backend_domain }}
     resources:
       limits:
         cpus: 0.15
@@ -49,19 +53,22 @@ services:
       reservations:
         cpus: 0.1
         memory: 128M
-    cors_origin: "*"
+    cors_origin: >
+      http://{{ backend_domain }}.com:8000,
+      http://{{ backend_domain }}.com,
+      https://{{ backend_domain }}:8000,
+      https://{{ backend_domain }}
     recaptcha:
       score_threshold: 0.7
       secret_key: ""
-    frontend_cluster_domain_name: agoston-backend.local.com
-    session_cookie_secret:
+    session_cookie_secret: ChangeMyNow
     auth:
       strategies:
         http-bearer:
           enable: true
           params: {}
         google-oauth20:
-          enable: true
+          enable: false
           params:
             clientId: ""
             clientSecret: ""
@@ -69,12 +76,11 @@ services:
       redirect_when_error: "/login"
       redirect_when_success: "/"
 
-
   worker:
     image:
       name: agostops/agoston-worker
       version: v1.2.0
-    environment: production
+    environment: development
     concurrency: 1
     poll_interval: 1000
     resources:

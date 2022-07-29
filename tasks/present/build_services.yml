@@ -9,7 +9,7 @@
         postgres:
           image: "{{ services.postgres.image.name }}:{{ services.postgres.image.version }}"
           command: >
-            -c search_path='agoston_public,agoston_api,agoston_identity,public'
+            -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
             -c shared_preload_libraries='pg_cron'
             -c cron.database_name='agoston'
             -c timezone='{{ time_zone }}'
@@ -17,12 +17,9 @@
           environment:
             - POSTGRES_DB=agoston
             - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
-            - graphile_password={{ services.postgres.graphile_password }}
-            - developer_password={{ services.postgres.developer_password }}
             - PGDATA=/var/lib/postgresql/data/pgdata
           volumes:
-            - "{{ persistent_configuration_path }}/postgres/graphile-init-sql:/docker-entrypoint-initdb.d"
-            - "{{ persistent_data_path }}:/var/lib/postgresql/data"
+            - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
           deploy:
             placement:
               constraints:
@@ -54,14 +51,14 @@
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ services.postgres.developer_password }}
             - PGADMIN_CONFIG_APP_COPYRIGHT=''
-            - PGADMIN_CONFIG_APP_NAME='Agoston Postgres Console'
+            - PGADMIN_CONFIG_APP_NAME='Postgres Console for Agoston'
             - PGADMIN_CONFIG_APP_ICON=''
             - PGADMIN_CONFIG_AUTO_DISCOVER_SERVERS=False
             - PGADMIN_CONFIG_SHOW_GRAVATAR_IMAGE=False
             - PGADMIN_CONFIG_MFA_ENABLED=False
           volumes:
-            - "{{ persistent_configuration_path }}/pgadmin/data:/var/lib/pgadmin"
-            - "{{ persistent_configuration_path }}/pgadmin/servers.json:/pgadmin4/servers.json"
+            - "{{ persistent_pgadmin_path }}/pgadmin/data:/var/lib/pgadmin"
+            - "{{ persistent_pgadmin_path }}/pgadmin/servers.json:/pgadmin4/servers.json"
           deploy:
             restart_policy:
               condition: on-failure
@@ -87,17 +84,20 @@
             - postgres
           image: "{{ services.graphile.image.name }}:{{ services.graphile.image.version }}"
           environment:
-            - BACKEND_UUID={{ backend_uuid }}
             - ENVIRONMENT_NAME={{ services.graphile.environment }}
-            - GRAPHILE_HTTP_PORT_LISTENING=4000
-            - POSTGRAPHILE_OWNER_DB_URI=postgres://postgres:{{ services.postgres.postgres_superuser_password }}@postgres:5432/agoston?sslmode=disable
-            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
+            - HTTP_PORT_LISTENING=4000
+            - HTTP_PATH_PREFIX={{ services.graphile.http.prefix }}
+            - HTTP_BACKEND_ORIGIN={{ services.graphile.http.backend_origin }}
+            - PGHOST=postgres
+            - PGDATABASE=agoston
+            - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
+            - POSTGRAPHILE_PASSWORD={{ services.postgres.graphile_password }}
+            - DEVELOPER_PASSWORD={{ services.postgres.developer_password }}
             - POSTGRAPHILE_DB_SCHEMA=agoston_public
             - POSTGRAPHILE_DEFAULT_ROLE=anonymous
             - CORS_ORIGIN={{ services.graphile.cors_origin }}
             - RECAPTCHA_SCORE_THRESHOLD={{ services.graphile.recaptcha.score_threshold }}
             - RECAPTCHA_SECRET_KEY={{ services.graphile.recaptcha.secret_key }}
-            - FRONTEND_CLUSTER_DOMAIN_NAME={{ services.graphile.frontend_cluster_domain_name }}
             - SESSION_COOKIE_SECRET={{ services.graphile.session_cookie_secret }}
             - AUTH_REDIRECT_WHEN_SUCCESS={{ services.graphile.auth.redirect_when_success }}
             - AUTH_REDIRECT_WHEN_ERROR={{ services.graphile.auth.redirect_when_error }}

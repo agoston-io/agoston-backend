@@ -1,4 +1,157 @@
 ---
+- name: Set services
+  set_fact:
+    backend_compose:
+      version: "3.9"
+      networks:
+        net_01:
+      services:
+        postgres:
+          image: "{{ services.postgres.image.name }}:{{ services.postgres.image.version }}"
+          command: >
+            -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
+            -c shared_preload_libraries='pg_cron'
+            -c cron.database_name='agoston'
+            -c timezone='{{ time_zone }}'
+            -c tcp_keepalives_idle=60
+          environment:
+            - POSTGRES_DB=agoston
+            - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
+            - PGDATA=/var/lib/postgresql/data/pgdata
+          volumes:
+            - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
+          deploy:
+            placement:
+              constraints:
+                - node.labels.{{ backend_uuid }}_postgres_node_type==rw
+            restart_policy:
+              condition: on-failure
+              delay: 5s
+              max_attempts: 3
+              window: 120s
+            resources:
+              limits:
+                cpus: "{{ services.postgres.resources.limits.cpus }}"
+                memory: "{{ services.postgres.resources.limits.cpus }}"
+              reservations:
+                cpus: "{{ services.postgres.resources.reservations.cpus }}"
+                memory: "{{ services.postgres.resources.reservations.cpus }}"
+          sysctls:
+            - net.ipv4.tcp_keepalive_time=60
+          networks:
+            - net_01
+          ports:
+            - "{{ services.postgres.http_port_listening }}:5432"
+
+        pgadmin:
+          depends_on:
+            - postgres
+          image: "{{ services.pgadmin.image.name }}:{{ services.pgadmin.image.version }}"
+          environment:
+            - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
+            - PGADMIN_DEFAULT_PASSWORD={{ services.postgres.developer_password }}
+            - PGADMIN_CONFIG_APP_COPYRIGHT=''
+            - PGADMIN_CONFIG_APP_NAME='Postgres Console for Agoston'
+            - PGADMIN_CONFIG_APP_ICON=''
+            - PGADMIN_CONFIG_AUTO_DISCOVER_SERVERS=False
+            - PGADMIN_CONFIG_SHOW_GRAVATAR_IMAGE=False
+            - PGADMIN_CONFIG_MFA_ENABLED=False
+          volumes:
+            - "{{ persistent_pgadmin_path }}/pgadmin/data:/var/lib/pgadmin"
+            - "{{ persistent_pgadmin_path }}/pgadmin/servers.json:/pgadmin4/servers.json"
+          deploy:
+            restart_policy:
+              condition: on-failure
+              delay: 5s
+              max_attempts: 3
+              window: 120s
+            resources:
+              limits:
+                cpus: "{{ services.pgadmin.resources.limits.cpus }}"
+                memory: "{{ services.pgadmin.resources.limits.cpus }}"
+              reservations:
+                cpus: "{{ services.pgadmin.resources.reservations.cpus }}"
+                memory: "{{ services.pgadmin.resources.reservations.cpus }}"
+          sysctls:
+            - net.ipv4.tcp_keepalive_time=60
+          networks:
+            - net_01
+          ports:
+            - "{{ services.pgadmin.http_port_listening }}:80"
+
+        graphile:
+          depends_on:
+            - postgres
+          image: "{{ services.graphile.image.name }}:{{ services.graphile.image.version }}"
+          environment:
+            - ENVIRONMENT_NAME={{ services.graphile.environment }}
+            - HTTP_PORT_LISTENING=4000
+            - HTTP_PATH_PREFIX={{ services.graphile.http.prefix }}
+            - HTTP_BACKEND_ORIGIN={{ services.graphile.http.backend_origin }}
+            - PGHOST=postgres
+            - PGDATABASE=agoston
+            - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
+            - POSTGRAPHILE_PASSWORD={{ services.postgres.graphile_password }}
+            - DEVELOPER_PASSWORD={{ services.postgres.developer_password }}
+            - POSTGRAPHILE_DB_SCHEMA=agoston_public
+            - POSTGRAPHILE_DEFAULT_ROLE=anonymous
+            - CORS_ORIGIN={{ services.graphile.cors_origin }}
+            - RECAPTCHA_SCORE_THRESHOLD={{ services.graphile.recaptcha.score_threshold }}
+            - RECAPTCHA_SECRET_KEY={{ services.graphile.recaptcha.secret_key }}
+            - SESSION_COOKIE_SECRET={{ services.graphile.session_cookie_secret }}
+            - AUTH_REDIRECT_WHEN_SUCCESS={{ services.graphile.auth.redirect_when_success }}
+            - AUTH_REDIRECT_WHEN_ERROR={{ services.graphile.auth.redirect_when_error }}
+            - AUTH_REDIRECT_LOGOUT={{ services.graphile.auth.redirect_logout }}
+            - AUTH_STRATEGIES={{ services.graphile.auth.strategies|to_json(ensure_ascii=False)|string }}
+            - NODE_ENV=production
+          deploy:
+            restart_policy:
+              condition: on-failure
+              delay: 5s
+              max_attempts: 3
+              window: 120s
+            resources:
+              limits:
+                cpus: "{{ services.graphile.resources.limits.cpus }}"
+                memory: "{{ services.graphile.resources.limits.cpus }}"
+              reservations:
+                cpus: "{{ services.graphile.resources.reservations.cpus }}"
+                memory: "{{ services.graphile.resources.reservations.cpus }}"
+          sysctls:
+            - net.ipv4.tcp_keepalive_time=60
+          networks:
+            - net_01
+          ports:
+            - "{{ services.graphile.http_port_listening }}:4000"
+
+        worker:
+          depends_on:
+            - postgres
+          image: "{{ services.worker.image.name }}:{{ services.worker.image.version }}"
+          environment:
+            - ENVIRONMENT_NAME={{ services.worker.environment }}
+            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
+            - WORKER_CONCURRENCY={{ services.worker.concurrency }}
+            - WORKER_POLL_INTERVAL={{ services.worker.poll_interval }}
+            - NODE_ENV=production
+          deploy:
+            restart_policy:
+              condition: on-failure
+              delay: 5s
+              max_attempts: 3
+              window: 120s
+            resources:
+              limits:
+                cpus: "{{ services.worker.resources.limits.cpus }}"
+                memory: "{{ services.worker.resources.limits.cpus }}"
+              reservations:
+                cpus: "{{ services.worker.resources.reservations.cpus }}"
+                memory: "{{ services.worker.resources.reservations.cpus }}"
+          sysctls:
+            - net.ipv4.tcp_keepalive_time=60
+          networks:
+            - net_01
+
 - name: Create services stack
   run_once: yes
   become: yes

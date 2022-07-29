@@ -2,7 +2,6 @@
 - include_tasks: docker.yml
 - include_tasks: images.yml
 - include_tasks: persistent_paths.yml
-- include_tasks: build_services.yml
 - include_tasks: create_services.yml
 - include_tasks: ssl_certificat.yml
 - include_tasks: reverse_proxy.yml

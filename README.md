@@ -1,6 +1,7 @@
 # Agoston Backend
 
-All you need to run your self-hosted Agoston backend.
+All you need to run your self-hosted Agoston backend: the role
+will deploy an Agoston backend with a reverse proxy on the targeted host.
 
 ## Requirements
 
@@ -15,6 +16,7 @@ ansible-galaxy collection install community.docker
 
 # Role Variables
 
+- `backend_domain`: the domain name for the backend server (used for the reverse proxy).
 - `ansible_host`: server name/IP on which you want to deploy the Agoston backend.
 - `ansible_user`: the server user with the private SSH key authorized on the target server.
 This server must be able to become `root` via the proper privilege delegation:
@@ -24,6 +26,24 @@ sudo sh -c 'echo "<ansible_user> ALL=(ALL) NOPASSWD: ALL" >  /etc/sudoers.d/<ans
 
 Example with user niolap:
 sudo sh -c 'echo "niolap ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/niolap'
+```
+- All variables in `defaults/main.yml` can be overwritten to fit your environment.
+
+# SSL certificats
+
+The role will generate a self signed certificat. If you wish to use your own,
+install them here after the role execution:
+
+```bash
+# file /etc/nginx/sites-enabled/default
+ssl_certificate /etc/ssl/<backend_domain>.crt;
+ssl_certificate_key /etc/ssl/<backend_domain>.key;
+```
+
+Then restart nginx:
+
+```bash
+systemctl restart nginx
 ```
 
 # Example Playbook

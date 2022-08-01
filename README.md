@@ -29,7 +29,7 @@ sudo sh -c 'echo "niolap ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/niolap'
 ```
 - All variables in `defaults/main.yml` can be overwritten to fit your environment.
 
-# SSL certificats
+# SSL certificates
 
 The role will generate a self signed certificat. If you wish to use your own,
 install them here after the role execution:

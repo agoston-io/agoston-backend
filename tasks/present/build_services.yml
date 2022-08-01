@@ -16,7 +16,7 @@
             -c tcp_keepalives_idle=60
           environment:
             - POSTGRES_DB=agoston
-            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_superuser_password }}
+            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
             - PGDATA=/var/lib/postgresql/data/pgdata
           volumes:
             - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
@@ -90,7 +90,7 @@
             - HTTP_BACKEND_ORIGIN={{ stack_services.graphile.http.backend_origin }}
             - PGHOST=postgres
             - PGDATABASE=agoston
-            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_superuser_password }}
+            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
             - POSTGRAPHILE_PASSWORD={{ stack_services.postgres.graphile_password }}
             - DEVELOPER_PASSWORD={{ stack_services.postgres.developer_password }}
             - POSTGRAPHILE_DB_SCHEMA=agoston_public

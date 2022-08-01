@@ -9,7 +9,7 @@ persistent_pgdata_path: /opt/agoston-backend/pgdata
 stack_services:
 
   postgres:
-    postgres_superuser_password: postgres-Password2022
+    postgres_password: postgres-Password2022
     graphile_password: graphile-Password2022
     developer_password: developer-Password2022
     http_port_listening: 5432

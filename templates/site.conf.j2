@@ -15,14 +15,14 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
-        proxy_pass http://localhost:{{ services.graphile.http_port_listening }};
+        proxy_pass http://localhost:{{ stack_services.graphile.http_port_listening }};
     }
 
     location /v{{ version_major }}/pgadmin/ {
         proxy_set_header X-Script-Name /v{{ version_major }}/pgadmin;
         proxy_set_header Host $host;
         proxy_redirect off;
-        proxy_pass http://localhost:{{ services.pgadmin.http_port_listening }}/;
+        proxy_pass http://localhost:{{ stack_services.pgadmin.http_port_listening }}/;
       }
 
 }

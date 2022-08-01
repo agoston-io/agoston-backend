@@ -5,4 +5,4 @@
   community.docker.docker_compose:
     project_name: "agoston-backend"
     state: present
-    definition: "{{ backend_compose }}"
+    definition: "{{ compose_services }}"

@@ -6,7 +6,7 @@ backend_domain: agoston-backend.com
 persistent_pgadmin_path: /opt/agoston-backend/configuration
 persistent_pgdata_path: /opt/agoston-backend/pgdata
 
-services:
+stack_services:
 
   postgres:
     postgres_superuser_password: postgres-Password2022

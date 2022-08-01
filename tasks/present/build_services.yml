@@ -1,7 +1,7 @@
 ---
 - name: Set services
   set_fact:
-    backend_compose:
+    compose_services:
       version: "3.9"
       networks:
         net_01:
@@ -16,7 +16,7 @@
             -c tcp_keepalives_idle=60
           environment:
             - POSTGRES_DB=agoston
-            - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
+            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_superuser_password }}
             - PGDATA=/var/lib/postgresql/data/pgdata
           volumes:
             - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
@@ -31,17 +31,17 @@
               window: 120s
             resources:
               limits:
-                cpus: "{{ services.postgres.resources.limits.cpus }}"
-                memory: "{{ services.postgres.resources.limits.cpus }}"
+                cpus: "{{ stack_services.postgres.resources.limits.cpus }}"
+                memory: "{{ stack_services.postgres.resources.limits.cpus }}"
               reservations:
-                cpus: "{{ services.postgres.resources.reservations.cpus }}"
-                memory: "{{ services.postgres.resources.reservations.cpus }}"
+                cpus: "{{ stack_services.postgres.resources.reservations.cpus }}"
+                memory: "{{ stack_services.postgres.resources.reservations.cpus }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
             - net_01
           ports:
-            - "{{ services.postgres.http_port_listening }}:5432"
+            - "{{ stack_services.postgres.http_port_listening }}:5432"
 
         pgadmin:
           depends_on:
@@ -49,7 +49,7 @@
           image: dpage/pgadmin4:6.11
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
-            - PGADMIN_DEFAULT_PASSWORD={{ services.postgres.developer_password }}
+            - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
             - PGADMIN_CONFIG_APP_COPYRIGHT=''
             - PGADMIN_CONFIG_APP_NAME='Postgres Console for Agoston'
             - PGADMIN_CONFIG_APP_ICON=''
@@ -67,42 +67,42 @@
               window: 120s
             resources:
               limits:
-                cpus: "{{ services.pgadmin.resources.limits.cpus }}"
-                memory: "{{ services.pgadmin.resources.limits.cpus }}"
+                cpus: "{{ stack_services.pgadmin.resources.limits.cpus }}"
+                memory: "{{ stack_services.pgadmin.resources.limits.cpus }}"
               reservations:
-                cpus: "{{ services.pgadmin.resources.reservations.cpus }}"
-                memory: "{{ services.pgadmin.resources.reservations.cpus }}"
+                cpus: "{{ stack_services.pgadmin.resources.reservations.cpus }}"
+                memory: "{{ stack_services.pgadmin.resources.reservations.cpus }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
             - net_01
           ports:
-            - "{{ services.pgadmin.http_port_listening }}:80"
+            - "{{ stack_services.pgadmin.http_port_listening }}:80"
 
         graphile:
           depends_on:
             - postgres
           image: agostops/agoston-graphile:v1.2.1
           environment:
-            - ENVIRONMENT_NAME={{ services.graphile.environment }}
+            - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
-            - HTTP_PATH_PREFIX={{ services.graphile.http.prefix }}
-            - HTTP_BACKEND_ORIGIN={{ services.graphile.http.backend_origin }}
+            - HTTP_PATH_PREFIX={{ stack_services.graphile.http.prefix }}
+            - HTTP_BACKEND_ORIGIN={{ stack_services.graphile.http.backend_origin }}
             - PGHOST=postgres
             - PGDATABASE=agoston
-            - POSTGRES_PASSWORD={{ services.postgres.postgres_superuser_password }}
-            - POSTGRAPHILE_PASSWORD={{ services.postgres.graphile_password }}
-            - DEVELOPER_PASSWORD={{ services.postgres.developer_password }}
+            - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_superuser_password }}
+            - POSTGRAPHILE_PASSWORD={{ stack_services.postgres.graphile_password }}
+            - DEVELOPER_PASSWORD={{ stack_services.postgres.developer_password }}
             - POSTGRAPHILE_DB_SCHEMA=agoston_public
             - POSTGRAPHILE_DEFAULT_ROLE=anonymous
-            - CORS_ORIGIN={{ services.graphile.cors_origin }}
-            - RECAPTCHA_SCORE_THRESHOLD={{ services.graphile.recaptcha.score_threshold }}
-            - RECAPTCHA_SECRET_KEY={{ services.graphile.recaptcha.secret_key }}
-            - SESSION_COOKIE_SECRET={{ services.graphile.session_cookie_secret }}
-            - AUTH_REDIRECT_WHEN_SUCCESS={{ services.graphile.auth.redirect_when_success }}
-            - AUTH_REDIRECT_WHEN_ERROR={{ services.graphile.auth.redirect_when_error }}
-            - AUTH_REDIRECT_LOGOUT={{ services.graphile.auth.redirect_logout }}
-            - AUTH_STRATEGIES={{ services.graphile.auth.strategies|to_json(ensure_ascii=False)|string }}
+            - CORS_ORIGIN={{ stack_services.graphile.cors_origin }}
+            - RECAPTCHA_SCORE_THRESHOLD={{ stack_services.graphile.recaptcha.score_threshold }}
+            - RECAPTCHA_SECRET_KEY={{ stack_services.graphile.recaptcha.secret_key }}
+            - SESSION_COOKIE_SECRET={{ stack_services.graphile.session_cookie_secret }}
+            - AUTH_REDIRECT_WHEN_SUCCESS={{ stack_services.graphile.auth.redirect_when_success }}
+            - AUTH_REDIRECT_WHEN_ERROR={{ stack_services.graphile.auth.redirect_when_error }}
+            - AUTH_REDIRECT_LOGOUT={{ stack_services.graphile.auth.redirect_logout }}
+            - AUTH_STRATEGIES={{ stack_services.graphile.auth.strategies|to_json(ensure_ascii=False)|string }}
             - NODE_ENV=production
           deploy:
             restart_policy:
@@ -112,27 +112,27 @@
               window: 120s
             resources:
               limits:
-                cpus: "{{ services.graphile.resources.limits.cpus }}"
-                memory: "{{ services.graphile.resources.limits.cpus }}"
+                cpus: "{{ stack_services.graphile.resources.limits.cpus }}"
+                memory: "{{ stack_services.graphile.resources.limits.cpus }}"
               reservations:
-                cpus: "{{ services.graphile.resources.reservations.cpus }}"
-                memory: "{{ services.graphile.resources.reservations.cpus }}"
+                cpus: "{{ stack_services.graphile.resources.reservations.cpus }}"
+                memory: "{{ stack_services.graphile.resources.reservations.cpus }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
             - net_01
           ports:
-            - "{{ services.graphile.http_port_listening }}:4000"
+            - "{{ stack_services.graphile.http_port_listening }}:4000"
 
         worker:
           depends_on:
             - postgres
           image: agostops/agoston-worker:v1.2.0
           environment:
-            - ENVIRONMENT_NAME={{ services.worker.environment }}
-            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
-            - WORKER_CONCURRENCY={{ services.worker.concurrency }}
-            - WORKER_POLL_INTERVAL={{ services.worker.poll_interval }}
+            - ENVIRONMENT_NAME={{ stack_services.worker.environment }}
+            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
+            - WORKER_CONCURRENCY={{ stack_services.worker.concurrency }}
+            - WORKER_POLL_INTERVAL={{ stack_services.worker.poll_interval }}
             - NODE_ENV=production
           deploy:
             restart_policy:
@@ -142,11 +142,11 @@
               window: 120s
             resources:
               limits:
-                cpus: "{{ services.worker.resources.limits.cpus }}"
-                memory: "{{ services.worker.resources.limits.cpus }}"
+                cpus: "{{ stack_services.worker.resources.limits.cpus }}"
+                memory: "{{ stack_services.worker.resources.limits.cpus }}"
               reservations:
-                cpus: "{{ services.worker.resources.reservations.cpus }}"
-                memory: "{{ services.worker.resources.reservations.cpus }}"
+                cpus: "{{ stack_services.worker.resources.reservations.cpus }}"
+                memory: "{{ stack_services.worker.resources.reservations.cpus }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:

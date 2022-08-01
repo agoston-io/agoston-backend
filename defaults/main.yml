@@ -9,9 +9,6 @@ persistent_pgdata_path: /opt/agoston-backend/pgdata
 services:
 
   postgres:
-    image:
-      name: agostops/agoston-postgres
-      version: v14.4.0
     postgres_superuser_password: postgres-Password2022
     graphile_password: graphile-Password2022
     developer_password: developer-Password2022
@@ -25,9 +22,6 @@ services:
         memory: 128M
 
   pgadmin:
-    image:
-      name: dpage/pgadmin4
-      version: 6.11
     http_port_listening: 8001
     resources:
       limits:
@@ -38,9 +32,6 @@ services:
         memory: 128M
 
   graphile:
-    image:
-      name: agostops/agoston-graphile
-      version: v1.2.1
     environment: development
     http_port_listening: 8000
     http:
@@ -76,10 +67,8 @@ services:
       redirect_when_error: "/login"
       redirect_when_success: "/"
 
+
   worker:
-    image:
-      name: agostops/agoston-worker
-      version: v1.2.0
     environment: development
     concurrency: 1
     poll_interval: 1000

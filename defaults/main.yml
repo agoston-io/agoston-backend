@@ -35,7 +35,6 @@ stack_services:
     environment: development
     http_port_listening: 8000
     http:
-      prefix:
       backend_origin: https://{{ backend_domain }}
     resources:
       limits:

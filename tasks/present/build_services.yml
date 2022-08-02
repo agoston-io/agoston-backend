@@ -46,7 +46,7 @@
         pgadmin:
           depends_on:
             - postgres
-          image: dpage/pgadmin4:6.11
+          image: dpage/pgadmin4:6.12
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
@@ -82,11 +82,10 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.2.1
+          image: agostops/agoston-graphile:v1.2.2
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
-            - HTTP_PATH_PREFIX={{ stack_services.graphile.http.prefix }}
             - HTTP_BACKEND_ORIGIN={{ stack_services.graphile.http.backend_origin }}
             - PGHOST=postgres
             - PGDATABASE=agoston

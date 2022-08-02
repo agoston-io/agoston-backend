@@ -8,7 +8,7 @@ server {
     ssl_certificate /etc/ssl/{{ backend_domain }}.crt;
     ssl_certificate_key /etc/ssl/{{ backend_domain }}.key;
 
-    location /v{{ version_major }}/ {
+    location / {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -18,8 +18,8 @@ server {
         proxy_pass http://localhost:{{ stack_services.graphile.http_port_listening }}/;
     }
 
-    location /v{{ version_major }}/pgadmin/ {
-        proxy_set_header X-Script-Name /v{{ version_major }}/pgadmin;
+    location /pgadmin/ {
+        proxy_set_header X-Script-Name /pgadmin;
         proxy_set_header Host $host;
         proxy_redirect off;
         proxy_pass http://localhost:{{ stack_services.pgadmin.http_port_listening }}/;

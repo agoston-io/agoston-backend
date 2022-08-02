@@ -32,10 +32,10 @@
             resources:
               limits:
                 cpus: "{{ stack_services.postgres.resources.limits.cpus }}"
-                memory: "{{ stack_services.postgres.resources.limits.cpus }}"
+                memory: "{{ stack_services.postgres.resources.limits.memory }}"
               reservations:
                 cpus: "{{ stack_services.postgres.resources.reservations.cpus }}"
-                memory: "{{ stack_services.postgres.resources.reservations.cpus }}"
+                memory: "{{ stack_services.postgres.resources.reservations.memory }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
@@ -68,10 +68,10 @@
             resources:
               limits:
                 cpus: "{{ stack_services.pgadmin.resources.limits.cpus }}"
-                memory: "{{ stack_services.pgadmin.resources.limits.cpus }}"
+                memory: "{{ stack_services.pgadmin.resources.limits.memory }}"
               reservations:
                 cpus: "{{ stack_services.pgadmin.resources.reservations.cpus }}"
-                memory: "{{ stack_services.pgadmin.resources.reservations.cpus }}"
+                memory: "{{ stack_services.pgadmin.resources.reservations.memory }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
@@ -113,10 +113,10 @@
             resources:
               limits:
                 cpus: "{{ stack_services.graphile.resources.limits.cpus }}"
-                memory: "{{ stack_services.graphile.resources.limits.cpus }}"
+                memory: "{{ stack_services.graphile.resources.limits.memory }}"
               reservations:
                 cpus: "{{ stack_services.graphile.resources.reservations.cpus }}"
-                memory: "{{ stack_services.graphile.resources.reservations.cpus }}"
+                memory: "{{ stack_services.graphile.resources.reservations.memory }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:
@@ -143,10 +143,10 @@
             resources:
               limits:
                 cpus: "{{ stack_services.worker.resources.limits.cpus }}"
-                memory: "{{ stack_services.worker.resources.limits.cpus }}"
+                memory: "{{ stack_services.worker.resources.limits.memory }}"
               reservations:
                 cpus: "{{ stack_services.worker.resources.reservations.cpus }}"
-                memory: "{{ stack_services.worker.resources.reservations.cpus }}"
+                memory: "{{ stack_services.worker.resources.reservations.memory }}"
           sysctls:
             - net.ipv4.tcp_keepalive_time=60
           networks:

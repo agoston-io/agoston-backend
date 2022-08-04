@@ -50,6 +50,7 @@
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
+            - MASTER_PASSWORD_REQUIRED=False
             - PGADMIN_CONFIG_APP_COPYRIGHT=''
             - PGADMIN_CONFIG_APP_NAME='Postgres Console for Agoston'
             - PGADMIN_CONFIG_APP_ICON=''

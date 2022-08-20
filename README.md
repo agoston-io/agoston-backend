@@ -3,6 +3,8 @@
 All you need to run your self-hosted Agoston backend: the role
 will deploy an Agoston backend with a reverse proxy on the targeted host.
 
+More information about Agoston backend here: [https://agoston.io](https://agoston.io).
+
 ## Requirements
 
 - Linux server (Tested on Ubuntu 20.04 LTS) with Python 3.
@@ -12,6 +14,7 @@ will deploy an Agoston backend with a reverse proxy on the targeted host.
 sudo apt install python3-pip
 python3 -m pip install ansible
 ansible-galaxy collection install community.docker
+ansible-galaxy collection install community.general
 ```
 
 # Role Variables

@@ -1,5 +1,5 @@
 ---
-version: 1.5.0
+version: 1.2.0
 version_major: "{{ version.split('.')[0] }}"
 version_minor: "{{ version.split('.')[1] }}"
 version_patch: "{{ version.split('.')[2] }}"

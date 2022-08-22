@@ -127,7 +127,7 @@
         worker:
           depends_on:
             - postgres
-          image: agostops/agoston-worker:v1.4.0
+          image: agostops/agoston-worker:v1.4.3
           environment:
             - ENVIRONMENT_NAME={{ stack_services.worker.environment|default('production') }}
             - GRAPHILE_LOGGER_DEBUG={{ stack_services.worker.graphile_logger_debug|default('') }}
@@ -158,3 +158,6 @@
             - net.ipv4.tcp_keepalive_time=60
           networks:
             - net_01
+
+- debug: var=compose_services
+  when: debug|bool

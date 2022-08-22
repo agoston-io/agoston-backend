@@ -78,3 +78,10 @@ stack_services:
       reservations:
         cpus: 0.1
         memory: 128M
+    email:
+      enable: false
+      smtp_host: smtp.example.com
+      smtp_port: 465
+      smtp_secure: true
+      smtp_auth_user: user
+      smtp_auth_pass: pwd

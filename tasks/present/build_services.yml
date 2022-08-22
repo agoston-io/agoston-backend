@@ -127,12 +127,19 @@
         worker:
           depends_on:
             - postgres
-          image: agostops/agoston-worker:v1.2.0
+          image: agostops/agoston-worker:v1.4.3
           environment:
-            - ENVIRONMENT_NAME={{ stack_services.worker.environment }}
+            - ENVIRONMENT_NAME={{ stack_services.worker.environment|default('production') }}
+            - GRAPHILE_LOGGER_DEBUG={{ stack_services.worker.graphile_logger_debug|default('') }}
             - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
-            - WORKER_CONCURRENCY={{ stack_services.worker.concurrency }}
-            - WORKER_POLL_INTERVAL={{ stack_services.worker.poll_interval }}
+            - WORKER_CONCURRENCY={{ stack_services.worker.concurrency|default('') }}
+            - WORKER_POLL_INTERVAL={{ stack_services.worker.poll_interval|default('') }}
+            - WORKER_EMAIL_ENABLE={{ stack_services.worker.email.enable|default('') }}
+            - WORKER_EMAIL_SMTP_HOST={{ stack_services.worker.email.smtp_host|default('') }}
+            - WORKER_EMAIL_SMTP_PORT={{ stack_services.worker.email.smtp_port|default('') }}
+            - WORKER_EMAIL_SMTP_SECURE={{ stack_services.worker.email.smtp_secure|default('') }}
+            - WORKER_EMAIL_SMTP_AUTH_USER={{ stack_services.worker.email.smtp_auth_user|default('') }}
+            - WORKER_EMAIL_SMTP_AUTH_PASS={{ stack_services.worker.email.smtp_auth_pass|default('') }}
             - NODE_ENV=production
           deploy:
             restart_policy:
@@ -151,3 +158,6 @@
             - net.ipv4.tcp_keepalive_time=60
           networks:
             - net_01
+
+- debug: var=compose_services
+  when: debug|bool

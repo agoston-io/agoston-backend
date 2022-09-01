@@ -7,7 +7,7 @@
         net_01:
       services:
         postgres:
-          image: agostops/agoston-postgres:v14.4.0
+          image: agostops/agoston-postgres:v14.5.0
           command: >
             -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
             -c shared_preload_libraries='pg_cron'
@@ -46,7 +46,7 @@
         pgadmin:
           depends_on:
             - postgres
-          image: dpage/pgadmin4:6.12
+          image: dpage/pgadmin4:6.13
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
@@ -83,7 +83,7 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.2.6
+          image: agostops/agoston-graphile:v1.2.7
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000

@@ -65,6 +65,10 @@ stack_services:
       redirect_logout: "/"
       redirect_when_error: "/login"
       redirect_when_success: "/"
+    stripe:
+      api_key: xxxxxxxxxxxxxxxxxxxxxxx
+      hook_enable: false
+      hook_endpoint_secret: xxxxxxxxxxxxxxxxxxxxxxx
 
 
   worker:

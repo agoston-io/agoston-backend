@@ -83,7 +83,7 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.2.7
+          image: agostops/agoston-graphile:v1.3.1
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
@@ -103,6 +103,9 @@
             - AUTH_REDIRECT_WHEN_ERROR={{ stack_services.graphile.auth.redirect_when_error }}
             - AUTH_REDIRECT_LOGOUT={{ stack_services.graphile.auth.redirect_logout }}
             - AUTH_STRATEGIES={{ stack_services.graphile.auth.strategies|to_json(ensure_ascii=False)|string }}
+            - STRIPE_HOOK_ENABLE={{ stack_services.graphile.stripe.hook_enable }}
+            - STRIPE_API_KEY={{ stack_services.graphile.stripe.api_key }}
+            - STRIPE_HOOK_ENDPOINT_SECRET={{ stack_services.graphile.stripe.hook_endpoint_secret }}
             - NODE_ENV=production
           deploy:
             restart_policy:

@@ -46,7 +46,7 @@
         pgadmin:
           depends_on:
             - postgres
-          image: dpage/pgadmin4:6.13
+          image: dpage/pgadmin4:6.14
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}

@@ -1,0 +1,50 @@
+---
+- name: TLS connection to Postgres | Check if a certificate already exists
+  run_once: yes
+  become: yes
+  stat:
+    path: "{{ persistent_pgdata_path }}/server.crt"
+  register: r_server_certificat
+
+- name: TLS connection to Postgres | Check if a certificate already exists
+  block:
+
+  - name: TLS connection to Postgres | Create private key (RSA, 4096 bits)
+    run_once: yes
+    become: yes
+    community.crypto.openssl_privatekey:
+      path: "{{ persistent_pgdata_path }}/server.key"
+
+  - name: TLS connection to Postgres | Create self-signed certificate
+    run_once: yes
+    become: yes
+    community.crypto.x509_certificate:
+      path: "{{ persistent_pgdata_path }}/server.crt"
+      privatekey_path: "{{ persistent_pgdata_path }}/server.key"
+      provider: selfsigned
+
+  when: not r_server_certificat.stat.exists
+
+- name: TLS connection to Postgres | Enforcing SSL in pg_hba
+  run_once: yes
+  become: yes
+  copy:
+    dest: "{{ persistent_pgdata_path }}/pg_hba.conf"
+    content: |
+      local   all all trust
+      hostssl all all ::1/128 md5
+      hostssl all all 0.0.0.0/0 md5
+
+- name: TLS connection to Postgres | Set ownership, group and permissions
+  run_once: yes
+  become: yes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: 999
+    group: 999
+    mode: '0600'
+  loop:
+    - "{{ persistent_pgdata_path }}/server.key"
+    - "{{ persistent_pgdata_path }}/server.crt"
+    - "{{ persistent_pgdata_path }}/pg_hba.conf"
+...

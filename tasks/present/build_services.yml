@@ -14,6 +14,11 @@
             -c cron.database_name='agoston'
             -c timezone='{{ time_zone }}'
             -c tcp_keepalives_idle=60
+            -c hba_file=/var/lib/postgresql/data/pg_hba.conf
+            -c ssl=on
+            -c ssl_ciphers=HIGH
+            -c ssl_cert_file=/var/lib/postgresql/data/server.crt
+            -c ssl_key_file=/var/lib/postgresql/data/server.key
           environment:
             - POSTGRES_DB=agoston
             - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
@@ -46,7 +51,7 @@
         pgadmin:
           depends_on:
             - postgres
-          image: dpage/pgadmin4:6.14
+          image: dpage/pgadmin4:6.15
           environment:
             - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
             - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
@@ -83,13 +88,14 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.4.0
+          image: agostops/agoston-graphile:v1.4.1
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
             - HTTP_BACKEND_ORIGIN={{ stack_services.graphile.http.backend_origin }}
             - PGHOST=postgres
             - PGDATABASE=agoston
+            - NODE_TLS_REJECT_UNAUTHORIZED=0
             - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
             - POSTGRAPHILE_PASSWORD={{ stack_services.postgres.graphile_password }}
             - DEVELOPER_PASSWORD={{ stack_services.postgres.developer_password }}
@@ -130,11 +136,12 @@
         worker:
           depends_on:
             - postgres
-          image: agostops/agoston-worker:v1.4.3
+          image: agostops/agoston-worker:v1.4.4
           environment:
             - ENVIRONMENT_NAME={{ stack_services.worker.environment|default('production') }}
             - GRAPHILE_LOGGER_DEBUG={{ stack_services.worker.graphile_logger_debug|default('') }}
-            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
+            - NODE_TLS_REJECT_UNAUTHORIZED=0
+            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=prefer
             - WORKER_CONCURRENCY={{ stack_services.worker.concurrency|default('') }}
             - WORKER_POLL_INTERVAL={{ stack_services.worker.poll_interval|default('') }}
             - WORKER_EMAIL_ENABLE={{ stack_services.worker.email.enable|default('') }}

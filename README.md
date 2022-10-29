@@ -3,12 +3,16 @@
 All you need to run your self-hosted Agoston backend: the role
 will deploy an Agoston backend with a reverse proxy on the targeted host.
 
-More information about Agoston backend here: [https://agoston.io](https://agoston.io).
+Test for free the in the [Agoston cloud](https://agoston.io).
+
+## Support
+
+Don't hesitate to shout out your questions on our [Discord server](https://discord.com/channels/1027572174468415620/1027572175139504191).
 
 ## Requirements
 
 - Linux server (Tested on Ubuntu 20.04 LTS) with Python 3.
-- Ansible with collections
+- Ansible (>=2.13) with collections
 
 ```bash
 sudo apt install python3-pip

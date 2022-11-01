@@ -5,6 +5,8 @@
 - include_tasks: persistent_paths_pg.yml
 - include_tasks: persistent_paths_pgadmin.yml
 - include_tasks: tls_postgres.yml
+- include_tasks: upgrade_postgres_from_14_to_15.yml
+  when: version == '1.7.0'
 - include_tasks: create_services.yml
 - include_tasks: tls_reverse_proxy.yml
 - include_tasks: reverse_proxy.yml

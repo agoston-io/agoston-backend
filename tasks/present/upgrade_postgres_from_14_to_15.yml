@@ -1,0 +1,108 @@
+---
+- name: Upgrade PG 14 to 15 | Check if a certificate already exists
+  run_once: yes
+  become: yes
+  stat:
+    path: "{{ persistent_pgdata_path }}/pgdata/PG_VERSION"
+  register: r_pgdata
+
+- block:
+
+  - name: Upgrade PG 14 to 15 | Shutdown current service stack
+    run_once: yes
+    become: yes
+    community.docker.docker_compose:
+      project_name: "agoston-backend"
+      state: absent
+      definition: "{{ compose_services }}"
+
+  - name: Upgrade PG 14 to 15 | create a {{ persistent_pgdata_path }}/pgdata_15 directory
+    run_once: yes
+    become: yes
+    ansible.builtin.file:
+      path: "{{ persistent_pgdata_path }}/pgdata_15"
+      state: directory
+      owner: '999'
+      group: '999'
+      mode: '0750'
+
+  - name: Upgrade PG 14 to 15 | Declare 2 PG services
+    run_once: yes
+    become: yes
+    set_fact:
+      compose_services_upgrade:
+        version: "3.9"
+        networks:
+          net_01:
+        services:
+          postgres_14:
+            image: agostops/agoston-postgres:v14.5.0
+            command: >
+              -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
+              -c shared_preload_libraries='pg_cron'
+              -c cron.database_name='agoston'
+              -c timezone='{{ time_zone }}'
+              -c tcp_keepalives_idle=60
+              -c hba_file=/var/lib/postgresql/data/pg_hba.conf
+              -c ssl=on
+              -c ssl_ciphers=HIGH
+              -c ssl_cert_file=/var/lib/postgresql/data/server.crt
+              -c ssl_key_file=/var/lib/postgresql/data/server.key
+            environment:
+              - POSTGRES_DB=agoston
+              - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
+              - PGDATA=/var/lib/postgresql/data/pgdata
+            volumes:
+              - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
+            deploy:
+              placement:
+                constraints:
+                  - node.labels.{{ backend_uuid }}_postgres_node_type==rw
+            networks:
+              - net_01
+          postgres_15:
+            image: agostops/agoston-postgres:v15.0.0
+            command: >
+              -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
+              -c shared_preload_libraries='pg_cron'
+              -c cron.database_name='agoston'
+              -c timezone='{{ time_zone }}'
+              -c tcp_keepalives_idle=60
+              -c hba_file=/var/lib/postgresql/data/pg_hba.conf
+              -c ssl=on
+              -c ssl_ciphers=HIGH
+              -c ssl_cert_file=/var/lib/postgresql/data/server.crt
+              -c ssl_key_file=/var/lib/postgresql/data/server.key
+            environment:
+              - POSTGRES_DB=agoston
+              - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
+              - PGDATA=/var/lib/postgresql/data/pgdata
+            volumes:
+              - "{{ persistent_pgdata_path }}/pgdata_15:/var/lib/postgresql/data"
+            deploy:
+              placement:
+                constraints:
+                  - node.labels.{{ backend_uuid }}_postgres_node_type==rw
+            networks:
+              - net_01
+
+  - name: Upgrade PG 14 to 15 | Create upgrade services stack
+    run_once: yes
+    become: yes
+    community.docker.docker_compose:
+      project_name: "agoston-backend-upgrade"
+      state: present
+      definition: "{{ compose_services_upgrade }}"
+
+  - meta: end_play
+
+  # - name: Upgrade PG 14 to 15 | exp/imp into POSTGRES_IMAGE
+
+  # - name: Upgrade PG 14 to 15 | stop containers
+
+  # - name: Upgrade PG 14 to 15 | remove
+
+  # - name: Upgrade PG 14 to 15 | rename pgdata_upgrade to pgdata
+
+  when: r_pgdata.stat.exists
+...

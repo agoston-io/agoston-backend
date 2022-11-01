@@ -7,7 +7,7 @@
         net_01:
       services:
         postgres:
-          image: agostops/agoston-postgres:v14.5.0
+          image: agostops/agoston-postgres:v15.0.0
           command: >
             -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
             -c shared_preload_libraries='pg_cron'

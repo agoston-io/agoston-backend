@@ -67,7 +67,7 @@ ansible-playbook deploy.yml \
 
 # License
 
-See LiCENSE file.
+See LICENSE file.
 
 # Author Information
 

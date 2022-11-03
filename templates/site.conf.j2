@@ -17,14 +17,6 @@ server {
         proxy_cache_bypass $http_upgrade;
         proxy_pass http://localhost:{{ stack_services.graphile.http_port_listening }}/;
     }
-
-    location /pgadmin/ {
-        proxy_set_header X-Script-Name /pgadmin;
-        proxy_set_header Host $host;
-        proxy_redirect off;
-        proxy_pass http://localhost:{{ stack_services.pgadmin.http_port_listening }}/;
-      }
-
 }
 
 server {

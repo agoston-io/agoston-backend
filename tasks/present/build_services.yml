@@ -48,54 +48,16 @@
           ports:
             - "{{ stack_services.postgres.http_port_listening }}:5432"
 
-        pgadmin:
-          depends_on:
-            - postgres
-          image: dpage/pgadmin4:6.15
-          environment:
-            - PGADMIN_DEFAULT_EMAIL={{ backend_uuid }}@agoston.io
-            - PGADMIN_DEFAULT_PASSWORD={{ stack_services.postgres.developer_password }}
-            - MASTER_PASSWORD_REQUIRED=False
-            - PGADMIN_CONFIG_APP_COPYRIGHT=''
-            - PGADMIN_CONFIG_APP_NAME='Postgres Console for Agoston'
-            - PGADMIN_CONFIG_APP_ICON=''
-            - PGADMIN_CONFIG_AUTO_DISCOVER_SERVERS=False
-            - PGADMIN_CONFIG_SHOW_GRAVATAR_IMAGE=False
-            - PGADMIN_CONFIG_MFA_ENABLED=False
-          volumes:
-            - "{{ persistent_pgadmin_path }}/pgadmin/data:/var/lib/pgadmin"
-            - "{{ persistent_pgadmin_path }}/pgadmin/servers.json:/pgadmin4/servers.json"
-          deploy:
-            restart_policy:
-              condition: on-failure
-              delay: 5s
-              max_attempts: 3
-              window: 120s
-            resources:
-              limits:
-                cpus: "{{ stack_services.pgadmin.resources.limits.cpus }}"
-                memory: "{{ stack_services.pgadmin.resources.limits.memory }}"
-              reservations:
-                cpus: "{{ stack_services.pgadmin.resources.reservations.cpus }}"
-                memory: "{{ stack_services.pgadmin.resources.reservations.memory }}"
-          sysctls:
-            - net.ipv4.tcp_keepalive_time=60
-          networks:
-            - net_01
-          ports:
-            - "{{ stack_services.pgadmin.http_port_listening }}:80"
-
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.4.1
+          image: agostops/agoston-graphile:v1.4.2
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
             - HTTP_BACKEND_ORIGIN={{ stack_services.graphile.http.backend_origin }}
             - PGHOST=postgres
             - PGDATABASE=agoston
-            - NODE_TLS_REJECT_UNAUTHORIZED=0
             - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
             - POSTGRAPHILE_PASSWORD={{ stack_services.postgres.graphile_password }}
             - DEVELOPER_PASSWORD={{ stack_services.postgres.developer_password }}
@@ -136,12 +98,11 @@
         worker:
           depends_on:
             - postgres
-          image: agostops/agoston-worker:v1.4.4
+          image: agostops/agoston-worker:v1.4.5
           environment:
             - ENVIRONMENT_NAME={{ stack_services.worker.environment|default('production') }}
             - GRAPHILE_LOGGER_DEBUG={{ stack_services.worker.graphile_logger_debug|default('') }}
-            - NODE_TLS_REJECT_UNAUTHORIZED=0
-            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=prefer
+            - POSTGRAPHILE_DB_URI=postgres://postgraphile:{{ stack_services.postgres.graphile_password }}@postgres:5432/agoston?sslmode=disable
             - WORKER_CONCURRENCY={{ stack_services.worker.concurrency|default('') }}
             - WORKER_POLL_INTERVAL={{ stack_services.worker.poll_interval|default('') }}
             - WORKER_EMAIL_ENABLE={{ stack_services.worker.email.enable|default('') }}

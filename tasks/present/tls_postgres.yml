@@ -44,8 +44,8 @@
   become: yes
   ansible.builtin.file:
     path: "{{ item }}"
-    owner: 999
-    group: 999
+    owner: "{{ stack_services.postgres.user_id }}"
+    group: "{{ stack_services.postgres.group_id }}"
     mode: '0600'
   loop:
     - "{{ persistent_pgdata_path }}/server.key"

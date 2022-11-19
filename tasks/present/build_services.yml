@@ -8,6 +8,7 @@
       services:
         postgres:
           image: agostops/agoston-postgres:v14.5.0
+          user: "{{ stack_services.postgres.user_id }}:{{ stack_services.postgres.group_id }}"
           command: >
             -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
             -c shared_preload_libraries='pg_cron'
@@ -24,6 +25,7 @@
             - POSTGRES_PASSWORD={{ stack_services.postgres.postgres_password }}
             - PGDATA=/var/lib/postgresql/data/pgdata
           volumes:
+            - /etc/passwd:/etc/passwd:ro
             - "{{ persistent_pgdata_path }}:/var/lib/postgresql/data"
           deploy:
             placement:

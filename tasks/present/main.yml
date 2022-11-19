@@ -4,6 +4,7 @@
 - include_tasks: images.yml
 - include_tasks: persistent_paths_pg.yml
 - include_tasks: tls_postgres.yml
+- include_tasks: create_pg_user.yml
 - include_tasks: create_services.yml
 - include_tasks: tls_reverse_proxy.yml
 - include_tasks: reverse_proxy.yml

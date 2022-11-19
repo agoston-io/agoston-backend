@@ -5,13 +5,13 @@
   ansible.builtin.group:
     name: postgres
     state: present
-    gid: "{{ stack_services.postgres.group_id }}"
+    gid: "{{ postgres_group_id }}"
 
 - name: Ensure user postgres exists with proper group and UID
   run_once: yes
   become: yes
   ansible.builtin.user:
     name: postgres
-    uid: "{{ stack_services.postgres.user_id }}"
+    uid: "{{ postgres_user_id }}"
     group: postgres
 ...

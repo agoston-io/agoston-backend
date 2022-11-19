@@ -8,7 +8,7 @@
       services:
         postgres:
           image: agostops/agoston-postgres:v14.5.0
-          user: "{{ stack_services.postgres.user_id }}:{{ stack_services.postgres.group_id }}"
+          user: "{{ postgres_user_id }}:{{ postgres_group_id }}"
           command: >
             -c search_path='agoston_public,agoston_api,agoston_identity,agoston_metadata,public'
             -c shared_preload_libraries='pg_cron'

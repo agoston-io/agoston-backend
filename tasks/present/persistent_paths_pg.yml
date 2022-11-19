@@ -4,6 +4,6 @@
   ansible.builtin.file:
     path: "{{ persistent_pgdata_path }}"
     state: directory
-    owner: "{{ stack_services.postgres.user_id }}"
-    group: "{{ stack_services.postgres.group_id }}"
+    owner: "{{ postgres_user_id }}"
+    group: "{{ postgres_group_id }}"
     mode: '0750'

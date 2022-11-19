@@ -5,6 +5,8 @@ time_zone: Europe/Zurich
 backend_uuid: 00000000-0000-0000-0000-000000000000
 backend_domain: agoston-backend.com
 persistent_pgdata_path: /opt/agoston-backend/pgdata
+postgres_user_id: 9999
+postgres_group_id: 9999
 
 stack_services:
 
@@ -13,8 +15,6 @@ stack_services:
     graphile_password: graphile-Password2022
     developer_password: developer-Password2022
     http_port_listening: 5432
-    user_id: 9999
-    group_id: 9999
     resources:
       limits:
         cpus: 0.25

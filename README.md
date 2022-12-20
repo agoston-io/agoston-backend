@@ -1,13 +1,28 @@
 # Agoston Backend
 
+The best tech stack for applications. 
+The reason is simple, it just implements together the best of the open-source world: 
+
+- **Postgres:** The World's Most Advanced Open Source Relational Database. 
+  - **Function:** To build custom logic.
+  - **Trigger:** To trigger functions on data changes or events.
+  - **pg_cron:** To schedule function execution regularly.
+  - **REST requests python package:** to call any REST API.
+- **Postgraphile:** Fastest GraphQL API server for PostgreSQL.
+- **Passport JS:** Simple authentication for Node.js.
+- **Unified Authentication:** User gets a session that works for requests AND subscriptions.
+- **Nodemailer:** A module for Node.js applications to allow easy-as-cake email sending.
+
+**NOTE:** Test for free the in the [Agoston cloud](https://agoston.io).
+
+# Repository content
+
 All you need to run your self-hosted Agoston backend: the role
 will deploy an Agoston backend with a reverse proxy on the targeted host.
 
-Test for free the in the [Agoston cloud](https://agoston.io).
-
 ## Support
 
-Don't hesitate to shout out your questions on our [Discord server](https://discord.com/channels/1027572174468415620/1027572175139504191).
+Shout out your questions on our [Discord server](https://discord.com/channels/1027572174468415620/1027572175139504191).
 
 ## Requirements
 

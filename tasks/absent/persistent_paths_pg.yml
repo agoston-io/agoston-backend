@@ -1,0 +1,6 @@
+---
+- name: Create host pgdata persistent directory
+  become: yes
+  ansible.builtin.file:
+    path: "{{ persistent_pgdata_path }}"
+    state: absent

@@ -1,0 +1,5 @@
+---
+- include_tasks: ../build_services.yml
+- include_tasks: delete_services.yml
+- include_tasks: persistent_paths_pg.yml
+- include_tasks: reverse_proxy.yml

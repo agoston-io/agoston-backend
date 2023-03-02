@@ -59,10 +59,11 @@ systemctl restart nginx
 # Change directory to the playbook directory
 cd ~/agoston-backend/playbooks
 
-# Run the deployment of Agoston backend
-ansible-playbook deploy.yml \
--e ansible_host=agoston-backend \
--e ansible_user=niolap
+# Deploy your Agoston backend
+ansible-playbook deploy.yml
+
+# Destroy your backend
+ansible-playbook destroy.yml
 ```
 
 # License

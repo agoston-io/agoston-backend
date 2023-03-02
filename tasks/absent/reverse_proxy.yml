@@ -1,0 +1,6 @@
+---
+- name: Start nginx
+  become: yes
+  ansible.builtin.service:
+    name: nginx
+    state: stopped

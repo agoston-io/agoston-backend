@@ -53,7 +53,7 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.4.2
+          image: agostops/agoston-graphile:v1.7.2
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
@@ -64,7 +64,6 @@
             - POSTGRAPHILE_PASSWORD={{ stack_services.postgres.graphile_password }}
             - DEVELOPER_PASSWORD={{ stack_services.postgres.developer_password }}
             - POSTGRAPHILE_DB_SCHEMA=agoston_public
-            - POSTGRAPHILE_DEFAULT_ROLE=anonymous
             - CORS_ORIGIN={{ stack_services.graphile.cors_origin }}
             - RECAPTCHA_SCORE_THRESHOLD={{ stack_services.graphile.recaptcha.score_threshold }}
             - RECAPTCHA_SECRET_KEY={{ stack_services.graphile.recaptcha.secret_key }}

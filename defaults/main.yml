@@ -36,14 +36,14 @@ stack_services:
         cpus: 0.1
         memory: 128M
     cors_origin: >
-      http://{{ backend_domain }}.com:8000,
-      http://{{ backend_domain }}.com,
+      http://{{ backend_domain }}:8000,
+      http://{{ backend_domain }},
       https://{{ backend_domain }}:8000,
       https://{{ backend_domain }}
     recaptcha:
       score_threshold: 0.7
       secret_key: ""
-    session_cookie_secret: ChangeMyNow
+    session_cookie_secret: ChangeMeNow
     auth:
       strategies:
         http-bearer:

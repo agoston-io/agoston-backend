@@ -53,7 +53,7 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.7.15
+          image: agostops/agoston-graphile:v1.7.16
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000
@@ -68,9 +68,6 @@
             - RECAPTCHA_SCORE_THRESHOLD={{ stack_services.graphile.recaptcha.score_threshold }}
             - RECAPTCHA_SECRET_KEY={{ stack_services.graphile.recaptcha.secret_key }}
             - SESSION_COOKIE_SECRET={{ stack_services.graphile.session_cookie_secret }}
-            - AUTH_REDIRECT_WHEN_SUCCESS={{ stack_services.graphile.auth.redirect_when_success }}
-            - AUTH_REDIRECT_WHEN_ERROR={{ stack_services.graphile.auth.redirect_when_error }}
-            - AUTH_REDIRECT_LOGOUT={{ stack_services.graphile.auth.redirect_logout }}
             - AUTH_STRATEGIES={{ stack_services.graphile.auth.strategies|to_json(ensure_ascii=False)|string }}
             - STRIPE_HOOK_ENABLE={{ stack_services.graphile.stripe.hook_enable }}
             - STRIPE_API_KEY={{ stack_services.graphile.stripe.api_key }}

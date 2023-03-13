@@ -1,9 +1,9 @@
 # Agoston Backend
 
-The best tech stack for applications. 
-The reason is simple, it just implements together the best of the open-source world: 
+The best tech stack for applications.
+The reason is simple, it just implements together the best of the open-source world:
 
-- **Postgres:** The World's Most Advanced Open Source Relational Database. 
+- **Postgres:** The World's Most Advanced Open Source Relational Database.
   - **Function:** To build custom logic.
   - **Trigger:** To trigger functions on data changes or events.
   - **pg_cron:** To schedule function execution regularly.

@@ -1,8 +1,9 @@
 ---
-- name: Create services stack
+- name: Create/restart services stack
   run_once: yes
   become: yes
   community.docker.docker_compose:
     project_name: "agoston-backend"
     state: present
+    restarted: true
     definition: "{{ compose_services }}"

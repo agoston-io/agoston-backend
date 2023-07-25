@@ -53,7 +53,7 @@
         graphile:
           depends_on:
             - postgres
-          image: agostops/agoston-graphile:v1.9.7
+          image: agostops/agoston-graphile:v1.9.8
           environment:
             - ENVIRONMENT_NAME={{ stack_services.graphile.environment }}
             - HTTP_PORT_LISTENING=4000

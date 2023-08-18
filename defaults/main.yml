@@ -54,29 +54,7 @@ stack_services:
           params:
             clientId: ""
             clientSecret: ""
-      redirect_logout: "/"
-      redirect_when_error: "/login"
-      redirect_when_success: "/"
     stripe:
       api_key: xxxxxxxxxxxxxxxxxxxxxxx
       hook_enable: false
       hook_endpoint_secret: xxxxxxxxxxxxxxxxxxxxxxx
-
-  worker:
-    environment: development
-    concurrency: 1
-    poll_interval: 1000
-    resources:
-      limits:
-        cpus: 0.15
-        memory: 128M
-      reservations:
-        cpus: 0.1
-        memory: 128M
-    email:
-      enable: false
-      smtp_host: smtp.example.com
-      smtp_port: 465
-      smtp_secure: true
-      smtp_auth_user: user
-      smtp_auth_pass: pwd

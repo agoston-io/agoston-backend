@@ -7,4 +7,3 @@
   loop:
     - "{{ compose_services.services.postgres.image }}"
     - "{{ compose_services.services.graphile.image }}"
-    - "{{ compose_services.services.worker.image }}"
